@@ -192,7 +192,7 @@ class ColorButtonState extends State<ColorButton> with WidgetsBindingObserver {
   @override
   void didChangeMetrics() {
     final view = View.of(context);
-    final size = view.display.size;
+    final size = view.physicalSize / view.devicePixelRatio;
     final keyboardTopPixels = size.height - view.viewInsets.bottom;
 
     final newBottom =
