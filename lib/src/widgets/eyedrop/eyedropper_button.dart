@@ -18,11 +18,15 @@ class EyedropperButton extends StatelessWidget {
   /// color selection callback
   final ValueChanged<Color> onColor;
 
+  /// tap callback
+  final GestureTapCallback? onTap;
+
   /// hover, and the color changed callback
   final ValueChanged<Color>? onColorChanged;
 
   const EyedropperButton({
     required this.onColor,
+    this.onTap,
     this.onColorChanged,
     this.icon = Icons.colorize,
     this.iconColor = Colors.black54,
@@ -33,15 +37,17 @@ class EyedropperButton extends StatelessWidget {
   Widget build(BuildContext context) => Container(
         decoration: _decoration,
         child: IconButton(
-          icon: Icon(icon),
-          color: iconColor,
-          onPressed:
-              // cf. https://github.com/flutter/flutter/issues/22308
-              () => Future.delayed(
-            50.milliseconds,
-            () => _onEyeDropperRequest(context),
-          ),
-        ),
+            icon: Icon(icon),
+            color: iconColor,
+            onPressed:
+                // cf. https://github.com/flutter/flutter/issues/22308
+                () => {
+                      onTap?.call(),
+                      Future.delayed(
+                        50.milliseconds,
+                        () => _onEyeDropperRequest(context),
+                      )
+                    }),
       );
 
   void _onEyeDropperRequest(BuildContext context) {
