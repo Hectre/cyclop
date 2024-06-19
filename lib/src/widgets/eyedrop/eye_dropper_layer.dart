@@ -42,14 +42,17 @@ class EyeDrop extends InheritedWidget {
             key: captureKey,
             child: Listener(
               onPointerMove: (details) => _onHover(
+                captureKey.currentContext!,
                 details.position,
                 details.kind == PointerDeviceKind.touch,
               ),
               onPointerHover: (details) => _onHover(
+                captureKey.currentContext!,
                 details.position,
                 details.kind == PointerDeviceKind.touch,
               ),
-              onPointerUp: (details) => _onPointerUp(details.position),
+              onPointerUp: (details) =>
+                  _onPointerUp(captureKey.currentContext!, details.position),
               child: child,
             ),
           ),
@@ -64,8 +67,8 @@ class EyeDrop extends InheritedWidget {
     return eyeDrop;
   }
 
-  static void _onPointerUp(Offset position) {
-    _onHover(position, data.touchable);
+  static void _onPointerUp(BuildContext context, Offset position) {
+    _onHover(context, position, data.touchable);
     if (data.onColorSelected != null) {
       data.onColorSelected!(data.hoverColors.center);
     }
@@ -82,16 +85,21 @@ class EyeDrop extends InheritedWidget {
     }
   }
 
-  static void _onHover(Offset offset, bool touchable) {
+  static void _onHover(
+      BuildContext context, Offset globalOffset, bool touchable) {
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+
+    final localOffset = renderBox.globalToLocal(globalOffset);
+
     if (data.eyeOverlayEntry != null) data.eyeOverlayEntry!.markNeedsBuild();
 
-    data.cursorPosition = offset;
-
+    data.cursorPosition = globalOffset;
     data.touchable = touchable;
 
     if (data.snapshot != null) {
-      data.hoverColor = getPixelColor(data.snapshot!, offset);
-      data.hoverColors = getPixelColors(data.snapshot!, offset);
+      data.hoverColor = getPixelColor(data.snapshot!, localOffset);
+      data.hoverColors = getPixelColors(data.snapshot!, localOffset);
     }
 
     if (data.onColorChanged != null) {
