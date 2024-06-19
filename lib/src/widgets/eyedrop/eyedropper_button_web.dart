@@ -20,11 +20,15 @@ class EyedropperButton extends StatelessWidget {
   /// hover, and the color changed callback
   final ValueChanged<Color>? onColorChanged;
 
+    /// tap callback
+  final GestureTapCallback? onTap;
+
   /// verify if the button is in a CanvasKit context
   bool get eyedropEnabled => js.context['flutterCanvasKit'] != null;
 
   const EyedropperButton({
     required this.onColor,
+    this.onTap,
     this.onColorChanged,
     this.icon = Icons.colorize,
     this.iconColor = Colors.blueGrey,
