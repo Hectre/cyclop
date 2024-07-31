@@ -69,6 +69,10 @@ class EyeDrop extends InheritedWidget {
 
   static void _onPointerUp(BuildContext context, Offset position) {
     _onHover(context, position, data.touchable);
+    
+    if (data.onColorSelected != null) {
+      data.onColorSelected!(data.hoverColors.center);
+    }
 
     if (data.eyeOverlayEntry != null) {
       try {
@@ -79,10 +83,6 @@ class EyeDrop extends InheritedWidget {
       } catch (err) {
         debugPrint('ERROR !!! _onPointerUp $err');
       }
-    }
-
-    if (data.onColorSelected != null) {
-      data.onColorSelected!(data.hoverColors.center);
     }
   }
 
