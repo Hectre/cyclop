@@ -69,9 +69,6 @@ class EyeDrop extends InheritedWidget {
 
   static void _onPointerUp(BuildContext context, Offset position) {
     _onHover(context, position, data.touchable);
-    if (data.onColorSelected != null) {
-      data.onColorSelected!(data.hoverColors.center);
-    }
 
     if (data.eyeOverlayEntry != null) {
       try {
@@ -82,6 +79,10 @@ class EyeDrop extends InheritedWidget {
       } catch (err) {
         debugPrint('ERROR !!! _onPointerUp $err');
       }
+    }
+
+    if (data.onColorSelected != null) {
+      data.onColorSelected!(data.hoverColors.center);
     }
   }
 
@@ -122,7 +123,13 @@ class EyeDrop extends InheritedWidget {
 
     data.snapshot = await repaintBoundaryToImage(renderer);
 
-    if (data.snapshot == null) return;
+    if (data.snapshot == null || data.cursorPosition == null) return;
+
+    final localOffset = renderer.globalToLocal(data.cursorPosition!);
+
+    data.hoverColor = getPixelColor(data.snapshot!, localOffset);
+    data.hoverColors = getPixelColors(data.snapshot!, localOffset);
+    data.eyeOverlayEntry?.markNeedsBuild();
 
     data.eyeOverlayEntry = OverlayEntry(
       builder: (_) => EyeDropOverlay(
@@ -135,6 +142,10 @@ class EyeDrop extends InheritedWidget {
     if (context.mounted) {
       Overlay.of(context).insert(data.eyeOverlayEntry!);
     }
+  }
+
+  void updateCursorPosition(Offset offset) {
+    data.cursorPosition = offset;
   }
 
   @override
