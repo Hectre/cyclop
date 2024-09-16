@@ -69,21 +69,12 @@ class EyeDrop extends InheritedWidget {
 
   static void _onPointerUp(BuildContext context, Offset position) {
     _onHover(context, position, data.touchable);
-    
+
     if (data.onColorSelected != null) {
       data.onColorSelected!(data.hoverColors.center);
     }
 
-    if (data.eyeOverlayEntry != null) {
-      try {
-        data.eyeOverlayEntry!.remove();
-        data.eyeOverlayEntry = null;
-        data.onColorSelected = null;
-        data.onColorChanged = null;
-      } catch (err) {
-        debugPrint('ERROR !!! _onPointerUp $err');
-      }
-    }
+    reset();
   }
 
   static void _onHover(
@@ -141,6 +132,19 @@ class EyeDrop extends InheritedWidget {
 
     if (context.mounted) {
       Overlay.of(context).insert(data.eyeOverlayEntry!);
+    }
+  }
+
+  static void reset() {
+    if (data.eyeOverlayEntry != null) {
+      try {
+        data.eyeOverlayEntry!.remove();
+        data.eyeOverlayEntry = null;
+        data.onColorSelected = null;
+        data.onColorChanged = null;
+      } catch (err) {
+        debugPrint('ERROR !!! _onPointerUp $err');
+      }
     }
   }
 
